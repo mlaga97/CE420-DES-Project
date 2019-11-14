@@ -2,9 +2,10 @@
 
 using namespace std;
 
+// TODO: Why tho?
 void dumpBits28(string name, uint64_t input) {
   cout << name << " = ";
-  for(int i = 0; i < 4; i++) {
+  for(int i = 4; i < 8; i++) {
     cout << bitset<7>(0b1111111 & (input >> ((7-i)*7))) << " ";
   }
   cout << endl;
