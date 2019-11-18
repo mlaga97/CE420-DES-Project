@@ -46,15 +46,23 @@ uint32_t roundFunction(uint32_t right, uint64_t subkey) {
   uint32_t sboxed = sbox(xoredBlock);
   uint32_t result = permutate(sboxed, 32, roundPermutateLUT);
 
-  /*
-  dumpBits48("K1", subkey);
-  dumpBits32("R0", right);
-  dumpBits48("E(R0)", expandedBlock);
-  dumpBits48("K1+E(R0) = B", xoredBlock);
-  dumpBits32("S(B)", sboxed);
-  dumpBits32("S(B)", 0b11111111111111111111111111111111 >> 31);
-  dumpBits32("P(S(B)) = f", result);
-  */
+  cout << "Subkey     = ";
+  dumpBits48(subkey);
+
+  cout << "Right      = ";
+  dumpBits32(right);
+
+  cout << "Expanded   = ";
+  dumpBits48(expandedBlock);
+
+  cout << "Xor'ed     = ";
+  dumpBits48(xoredBlock);
+
+  cout << "S-Box'ed   = ";
+  dumpBits32(sboxed);
+
+  cout << "Permutated = ";
+  dumpBits32(result);
 
   return result;
 }
@@ -64,17 +72,16 @@ uint64_t des(uint64_t block, uint64_t key, bool decrypt) {
   uint32_t left[32], right[32];
   uint64_t initialPermutation;
 
-  cout << "################################################################################" << endl;
-  cout << "# DES" << endl;
+  cout << "## Inputs ######################################################################" << endl;
+  cout << "Key        = ";
+  dumpBits64(key);
 
-  cout << "## Inputs" << endl;
-  cout << "Key   = " << hex << key << endl;
-  cout << "Block = " << hex << block << endl;
+  cout << "Block      = ";
+  dumpBits64(block);
+
   cout << endl;
-
-  cout << "## Subkey Generation" << endl;
+  cout << "## Subkey Generation ###########################################################" << endl;
   generateSubkeys(key, subkeys);
-  cout << endl;
 
   // Perform Permutation
   initialPermutation = permutate(block, 64, ipLUT);
@@ -83,35 +90,29 @@ uint64_t des(uint64_t block, uint64_t key, bool decrypt) {
 
   // Dump Permutation Info
   cout << "## Initial Permutation" << endl;
-  cout << "Data Block          = " << hex << block << endl;
-  cout << "                    = ";
-  dumpBits64(block);
-  cout << endl;
-
-  cout << "Initial Permutation = ";
-  dumpBits64(initialPermutation);
-  cout << endl;
-  cout << "                    = " << hex << initialPermutation << endl;
+  cout << "Block      = "; dumpBits64(block);
+  cout << "Init. Perm = "; dumpBits64(initialPermutation);
 
   // Run the Rounds
   cout << endl;
-  cout << "## Rounds" << endl;
   for (int i = 1; i <= 16; i++) {
     uint32_t result;
 
-    cout << "### Round " << dec << i << endl;
+    cout << "## Round " << dec << i << " ####################################################################" << endl;
 
     // Invert subkey order for decryption
     if (decrypt) {
-      cout << "Subkey = " << hex << subkeys[16-i] << endl;
       result = roundFunction(right[i-1], subkeys[16-i]);
     } else {
-      cout << "Subkey = " << hex << subkeys[i-1] << endl;
       result = roundFunction(right[i-1], subkeys[i-1]);
     }
 
     right[i] = left[i-1] ^ result;
     left[i] = right[i-1];
+
+    cout << "left[" << dec << i-1 << "]   "; if (i < 10) cout << " "; cout << "= "; dumpBits32(left[i-1]);
+
+    cout << "right[" << dec << i << "] "; if (i < 10) cout << " "; cout << " = "; dumpBits32(right[i]);
 
     cout << endl;
   }
@@ -121,16 +122,20 @@ uint64_t des(uint64_t block, uint64_t key, bool decrypt) {
   uint64_t finalPermutation = permutate(round16_combined, 64, fpLUT);
 
   // Dump Final Permutation
-  cout << "## Final Permutation" << endl;
-  cout << "left[16]  = " << hex << left[16] << endl;
-  cout << "right[16] = " << hex << right[16] << endl;
+  cout << "## Final Permutation ###########################################################" << endl;
+  cout << "right[16]  = "; dumpBits32(right[16]);
+  cout << "left[16]   = "; dumpBits32(left[16]);
   cout << endl;
+  cout << "Combined   = "; dumpBits64(round16_combined);
+  cout << "Permutated = "; dumpBits64(finalPermutation);
 
-  cout << "Round 16 Combined  = " << hex << round16_combined << endl;
-  cout << "Final Permutation  = " << hex << finalPermutation << endl;
+  cout << endl;
+  cout << "## Overview ####################################################################" << endl;
+  cout << "Key        = "; dumpBits64(key);
 
+  cout << "Block      = "; dumpBits64(block);
 
-  cout << "################################################################################" << endl;
+  cout << "Result     = "; dumpBits64(finalPermutation);
 
   return finalPermutation;
 }

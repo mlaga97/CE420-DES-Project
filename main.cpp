@@ -28,13 +28,13 @@ int main(int argc, char** argv) {
         std::cout << "Please enter your block: ";
         std::cin >> std::hex >> block;
         std::cout << std::endl;
-        std::cout << "Result: " << std::hex << des(block, key, false) << std::endl;
+        des(block, key, false);
         break;
       case 3:
         std::cout << "Please enter your block: ";
         std::cin >> std::hex >> block;
         std::cout << std::endl;
-        std::cout << "Result: " << std::hex << des(block, key, true) << std::endl;
+        des(block, key, true);
         break;
     }
     std::cout << std::endl;
