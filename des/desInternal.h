@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
+#include "des.h"
 
 uint32_t sbox(uint64_t input);
 void generateSubkeys(uint64_t key, uint64_t* subkeys);
 uint32_t roundFunction(uint32_t right, uint64_t subkey);
-uint64_t des(uint64_t block, uint64_t key, bool decrypt);
 uint64_t permutate(uint64_t input, uint8_t size, uint8_t *lut);
+uint64_t permutate(uint64_t input, uint8_t inputSize, uint8_t outputSize, uint8_t lut[]);
 
 // Initial and final permutations
 extern uint8_t ipLUT[64];

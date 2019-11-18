@@ -1,4 +1,4 @@
-#include "des.h"
+#include "desInternal.h"
 
 uint8_t fpLUT[] = {
   40,  8, 48, 16, 56, 24, 64, 32, 

@@ -1,4 +1,4 @@
-#include "des.h"
+#include "desInternal.h"
 #include "outputHelper.h"
 
 #include <iostream>
@@ -10,18 +10,6 @@ uint32_t rotl(uint32_t input, uint8_t count) {
   uint32_t result = (0b1111111111111111111111111111ul & ((uint64_t) input << count)) | overflow;
 
   return result;
-}
-
-uint64_t permutate(uint64_t input, uint8_t inputSize, uint8_t outputSize, uint8_t lut[]) {
-  uint64_t output = 0;
-
-  for (uint8_t i = 0; i < outputSize; i++) {
-    uint8_t offset = inputSize-lut[i];
-    bool newBit = 1 & (input >> offset);
-    output |= (uint64_t) newBit << outputSize-1-i;
-  }
-
-  return output;
 }
 
 void generateSubkeys(uint64_t key, uint64_t subkeys[]) {
